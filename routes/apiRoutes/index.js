@@ -5,6 +5,20 @@ const { v4: uuidv4 } = require('uuid');
 
 const notes = require('../../db/db.json');
 
+const deleteNote = (id, notes) => {
+    for (let i = 0; i < notes.length; i++) {
+        if (notes[i].id === id.id) {
+            notes.splice(i, 1);
+            break;
+        }
+    };
+    console.log(notes);
+    fs.writeFileSync(
+        path.join(__dirname, "../../db/db.json"),
+        JSON.stringify(notes, null, 2)
+    );
+}
+
 const createNewNote = (note, notes) => {
     note.id = uuidv4();
     notes.push(note);
@@ -46,6 +60,12 @@ router.post('/notes', (req, res) => {
     } else {
         res.status(400).send('Note is not properly formatted!!');
     }
+});
+
+router.delete('/notes/:id', (req, res) => {
+    const noteID = req.params;
+    deleteNote(noteID, notes);
+    res.send('Deleted');
 });
 
 module.exports = router;
